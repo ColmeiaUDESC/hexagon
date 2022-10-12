@@ -31,7 +31,9 @@ const UsersPage: NextPageWithLayout = () => (
     <Box bg="white" borderRadius={5} p={4} display="flex" flexDirection="column" gap={8}>
       <InputGroup w={96}>
         <InputLeftElement pointerEvents="none">
-          <MagnifyingGlass size={20} weight="bold" />
+          <Text color="gray.300">
+            <MagnifyingGlass size={20} weight="bold" />
+          </Text>
         </InputLeftElement>
         <Input type="text" placeholder="Pesquisar..." />
       </InputGroup>
