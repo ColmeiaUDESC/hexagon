@@ -13,6 +13,7 @@ import {
   PinInputField,
   Stack
 } from '@chakra-ui/react';
+import { NextPage } from 'next';
 import Link from 'next/link';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
@@ -26,7 +27,7 @@ interface FormValues {
   registerCode?: number;
 }
 
-function RegisterPage() {
+const RegisterPage: NextPage = () => {
   const {
     register,
     handleSubmit,
@@ -134,6 +135,6 @@ function RegisterPage() {
       </Center>
     </>
   );
-}
+};
 
 export default RegisterPage;

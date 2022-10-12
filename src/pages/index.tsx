@@ -12,6 +12,7 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react';
+import { NextPage } from 'next';
 import Link from 'next/link';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,7 +23,7 @@ interface FormValues {
   password: string;
 }
 
-function LoginPage() {
+const LoginPage: NextPage = () => {
   const {
     register,
     handleSubmit,
@@ -105,6 +106,6 @@ function LoginPage() {
       </Center>
     </>
   );
-}
+};
 
 export default LoginPage;
