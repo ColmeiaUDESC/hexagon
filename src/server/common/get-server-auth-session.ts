@@ -5,6 +5,4 @@ import { authOptions as nextAuthOptions } from '../../pages/api/auth/[...nextaut
 export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext['req'];
   res: GetServerSidePropsContext['res'];
-}) => {
-  return await unstable_getServerSession(ctx.req, ctx.res, nextAuthOptions);
-};
+}) => unstable_getServerSession(ctx.req, ctx.res, nextAuthOptions);
