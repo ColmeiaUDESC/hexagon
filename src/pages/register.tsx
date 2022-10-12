@@ -11,13 +11,16 @@ import {
   Input,
   PinInput,
   PinInputField,
-  Stack
+  Stack,
+  useToast
 } from '@chakra-ui/react';
-import { NextPage } from 'next';
+import { GetServerSidePropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import SEO from '../components/SEO';
+import { getServerAuthSession } from '../server/common/get-server-auth-session';
+import { trpc } from '../utils/trpc';
 
 interface FormValues {
   fullName: string;
@@ -28,14 +31,36 @@ interface FormValues {
 }
 
 const RegisterPage: NextPage = () => {
+  const toast = useToast();
+
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const createUser = trpc.user.create.useMutation();
+
+  const onSubmit = async (data: FormValues) => {
+    const res = await createUser.mutateAsync({ ...data });
+
+    if (res.status === 201) {
+      toast({
+        title: 'Usuário registrado com sucesso!',
+        description: 'Agora, confirme o seu endereço de email.',
+        status: 'success',
+        duration: 3500,
+        position: 'top-right'
+      });
+    } else {
+      toast({
+        title: 'Erro ao registrar usuário!',
+        description: 'Verifique os dados e tente novamente.',
+        status: 'error',
+        duration: 3500,
+        position: 'top-right'
+      });
+    }
   };
 
   return (
@@ -96,7 +121,7 @@ const RegisterPage: NextPage = () => {
                     <FormLabel htmlFor="passwordConfirm">Confirmação de senha</FormLabel>
                     <Input
                       id="passwordConfirm"
-                      type="passwordConfirm"
+                      type="password"
                       {...register('passwordConfirm', {
                         required: 'Campo não preenchido'
                       })}
@@ -119,7 +144,7 @@ const RegisterPage: NextPage = () => {
                 </Stack>
 
                 <Stack spacing="6">
-                  <Button type="submit" colorScheme="yellow">
+                  <Button type="submit" colorScheme="yellow" isLoading={createUser.isLoading}>
                     Registrar
                   </Button>
                   <Link href="/">
@@ -135,6 +160,23 @@ const RegisterPage: NextPage = () => {
       </Center>
     </>
   );
+};
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const session = await getServerAuthSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false
+      }
+    };
+  }
+
+  return {
+    props: {}
+  };
 };
 
 export default RegisterPage;

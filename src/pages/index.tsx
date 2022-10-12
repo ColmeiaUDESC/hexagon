@@ -13,13 +13,14 @@ import {
   Text,
   useToast
 } from '@chakra-ui/react';
-import { NextPage } from 'next';
+import { GetServerSidePropsContext, NextPage } from 'next';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import * as React from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import SEO from '../components/SEO';
+import { getServerAuthSession } from '../server/common/get-server-auth-session';
 
 interface FormValues {
   email: string;
@@ -29,6 +30,7 @@ interface FormValues {
 const LoginPage: NextPage = () => {
   const router = useRouter();
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -37,7 +39,7 @@ const LoginPage: NextPage = () => {
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data);
+    setIsLoading(true);
 
     const response = await signIn('credentials', {
       redirect: false,
@@ -59,6 +61,8 @@ const LoginPage: NextPage = () => {
     if (response?.url) {
       router.push('/dashboard');
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -112,7 +116,7 @@ const LoginPage: NextPage = () => {
                   </Button>
                 </HStack>
                 <Stack spacing="6">
-                  <Button type="submit" colorScheme="yellow">
+                  <Button type="submit" colorScheme="yellow" isLoading={isLoading}>
                     Entrar
                   </Button>
                   <Box textAlign="center">
@@ -133,6 +137,23 @@ const LoginPage: NextPage = () => {
       </Center>
     </>
   );
+};
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const session = await getServerAuthSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false
+      }
+    };
+  }
+
+  return {
+    props: {}
+  };
 };
 
 export default LoginPage;

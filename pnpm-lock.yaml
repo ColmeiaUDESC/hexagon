@@ -11,11 +11,13 @@ specifiers:
   '@trpc/next': 10.0.0-proxy-beta.17
   '@trpc/react': 10.0.0-proxy-beta.17
   '@trpc/server': 10.0.0-proxy-beta.17
+  '@types/bcryptjs': ^2.4.2
   '@types/node': 18.0.0
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
   '@typescript-eslint/eslint-plugin': ^5.40.0
   '@typescript-eslint/parser': ^5.40.0
+  bcryptjs: ^2.4.3
   eslint: ^7.32.0 || ^8.2.0
   eslint-config-airbnb: ^19.0.4
   eslint-config-airbnb-typescript: ^17.0.0
@@ -50,6 +52,7 @@ dependencies:
   '@trpc/next': 10.0.0-proxy-beta.17_pjo5znzmvoavbnx3lgpgfczhhi
   '@trpc/react': 10.0.0-proxy-beta.17_uadbn2mco7dvd7zrpswafsek5m
   '@trpc/server': 10.0.0-proxy-beta.17
+  bcryptjs: 2.4.3
   framer-motion: 7.5.3_biqbaboplfbrettd7655fr4n2y
   next: 12.3.1_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.13.0_azq6kxkn3od7qdylwkyksrwopy
@@ -61,6 +64,7 @@ dependencies:
   zod: 3.19.1
 
 devDependencies:
+  '@types/bcryptjs': 2.4.2
   '@types/node': 18.0.0
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
@@ -1657,6 +1661,10 @@ packages:
     resolution: {integrity: sha512-q3Cl4RC5q0kRg8KGt0sWQ11hKrLaIxK2FYGy7fQ6E+k9Yo8r2VDxn++PskZk9LTzgKRi1JtfZVJO15oXoXJHyw==}
     dev: false
 
+  /@types/bcryptjs/2.4.2:
+    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==}
+    dev: true
+
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
@@ -1967,6 +1975,10 @@ packages:
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: true
+
+  /bcryptjs/2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
+    dev: false
 
   /brace-expansion/1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}

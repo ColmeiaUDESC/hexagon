@@ -20,11 +20,13 @@ import {
   Tr,
   useDisclosure
 } from '@chakra-ui/react';
+import { GetServerSidePropsContext } from 'next';
 import { MagnifyingGlass, Pencil, Trash } from 'phosphor-react';
 import { ReactElement } from 'react';
 import ConfirmAction from '../../components/dashboard/ConfirmAction';
 import SEO from '../../components/SEO';
 import DashboardLayout from '../../layouts/DashboardLayout';
+import { getServerAuthSession } from '../../server/common/get-server-auth-session';
 import { NextPageWithLayout } from '../_app';
 
 const UsersPage: NextPageWithLayout = () => {
@@ -138,5 +140,22 @@ const UsersPage: NextPageWithLayout = () => {
 };
 
 UsersPage.getLayout = (page: ReactElement) => <DashboardLayout>{page}</DashboardLayout>;
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const session = await getServerAuthSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    };
+  }
+
+  return {
+    props: {}
+  };
+};
 
 export default UsersPage;
