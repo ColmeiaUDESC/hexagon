@@ -77,24 +77,18 @@ const LoginPage: NextPage = () => {
                   </FormControl>
                 </Stack>
                 <HStack justify="space-between">
-                  <Checkbox colorScheme="blue" defaultChecked>
-                    Permanecer conectado
-                  </Checkbox>
-                  <Button variant="link" colorScheme="blue" size="sm">
+                  <Checkbox defaultChecked>Permanecer conectado</Checkbox>
+                  <Button variant="link" size="sm">
                     Esqueceu sua senha?
                   </Button>
                 </HStack>
                 <Stack spacing="6">
-                  <Button type="submit" colorScheme="blue">
-                    Entrar
-                  </Button>
+                  <Button type="submit">Entrar</Button>
                   <Box textAlign="center">
                     <Text color="muted">
                       Você ainda não tem uma conta?{' '}
                       <Link href="/register">
-                        <Button variant="link" colorScheme="blue">
-                          Registre-se
-                        </Button>
+                        <Button variant="link">Registre-se</Button>
                       </Link>
                     </Text>
                   </Box>
