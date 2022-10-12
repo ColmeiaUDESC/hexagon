@@ -1,26 +1,53 @@
-import NextAuth, { type NextAuthOptions } from 'next-auth';
-import DiscordProvider from 'next-auth/providers/discord';
-
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import nextAuth, { NextAuthOptions, User } from 'next-auth';
 import { prisma } from '../../../server/db/client';
-import { env } from '../../../env/server.mjs';
 
 export const authOptions: NextAuthOptions = {
-  callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
-      return session;
-    }
-  },
   adapter: PrismaAdapter(prisma),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: 'Endereço de email', type: 'text' },
+        password: { label: 'Senha', type: 'password' }
+      },
+      async authorize(credentials) {
+        const user = {
+          id: 'abc',
+          fullName: 'João Dematte',
+          image: '123',
+          email: 'demattejoao@gmail.com',
+          emailVerified: new Date(),
+          role: 'USER',
+          password: '123'
+        };
+
+        if (credentials?.email === user.email && credentials.password === user.password) {
+          return user;
+        }
+
+        return null;
+      }
     })
-  ]
+  ],
+  session: {
+    strategy: 'jwt'
+  },
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.user = user as User;
+      }
+
+      return token;
+    },
+    session({ session, token }) {
+      session.user = token.user as User;
+
+      return session;
+    }
+  }
 };
 
-export default NextAuth(authOptions);
+export default nextAuth(authOptions);

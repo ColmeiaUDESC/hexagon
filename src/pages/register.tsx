@@ -119,9 +119,13 @@ const RegisterPage: NextPage = () => {
                 </Stack>
 
                 <Stack spacing="6">
-                  <Button type="submit">Registrar</Button>
+                  <Button type="submit" colorScheme="yellow">
+                    Registrar
+                  </Button>
                   <Link href="/">
-                    <Button variant="link">Voltar à página de login</Button>
+                    <Button variant="link" colorScheme="yellow">
+                      Voltar à página de login
+                    </Button>
                   </Link>
                 </Stack>
               </Stack>

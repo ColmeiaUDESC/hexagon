@@ -10,10 +10,13 @@ import {
   HStack,
   Input,
   Stack,
-  Text
+  Text,
+  useToast
 } from '@chakra-ui/react';
 import { NextPage } from 'next';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import SEO from '../components/SEO';
@@ -24,14 +27,38 @@ interface FormValues {
 }
 
 const LoginPage: NextPage = () => {
+  const router = useRouter();
+  const toast = useToast();
+
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     console.log(data);
+
+    const response = await signIn('credentials', {
+      redirect: false,
+      callbackUrl: '/dashboard',
+      email: data.email,
+      password: data.password
+    });
+
+    if (response?.error) {
+      toast({
+        title: 'Algo deu errado!',
+        description: 'Verifique as informações e tente novamente.',
+        status: 'error',
+        duration: 3500,
+        position: 'top-right'
+      });
+    }
+
+    if (response?.url) {
+      router.push('/dashboard');
+    }
   };
 
   return (
@@ -77,18 +104,24 @@ const LoginPage: NextPage = () => {
                   </FormControl>
                 </Stack>
                 <HStack justify="space-between">
-                  <Checkbox defaultChecked>Permanecer conectado</Checkbox>
-                  <Button variant="link" size="sm">
+                  <Checkbox defaultChecked colorScheme="yellow">
+                    Permanecer conectado
+                  </Checkbox>
+                  <Button variant="link" size="sm" colorScheme="yellow">
                     Esqueceu sua senha?
                   </Button>
                 </HStack>
                 <Stack spacing="6">
-                  <Button type="submit">Entrar</Button>
+                  <Button type="submit" colorScheme="yellow">
+                    Entrar
+                  </Button>
                   <Box textAlign="center">
                     <Text color="muted">
                       Você ainda não tem uma conta?{' '}
                       <Link href="/register">
-                        <Button variant="link">Registre-se</Button>
+                        <Button variant="link" colorScheme="yellow">
+                          Registre-se
+                        </Button>
                       </Link>
                     </Text>
                   </Box>

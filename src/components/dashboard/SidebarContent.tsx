@@ -1,7 +1,8 @@
 import { Button, Menu, MenuButton, MenuItem, MenuList, Stack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { House, Users } from 'phosphor-react';
+import { House, Kanban, Users } from 'phosphor-react';
 import NextLink from 'next/link';
+import { signOut } from 'next-auth/react';
 
 interface LinkProps {
   title: string;
@@ -68,6 +69,13 @@ const SidebarContent = () => {
       title: 'Usuários',
       path: '/dashboard/users',
       active: router.pathname === '/dashboard/users'
+    },
+    {
+      id: 2,
+      icon: <Kanban size={24} weight={router.pathname === '/dashboard/projects' ? 'fill' : 'bold'} />,
+      title: 'Projetos',
+      path: '/dashboard/projects',
+      active: router.pathname === '/dashboard/projects'
     }
   ];
 
@@ -85,7 +93,7 @@ const SidebarContent = () => {
         </MenuButton>
         <MenuList>
           <MenuItem>Configurações</MenuItem>
-          <MenuItem>Desconectar</MenuItem>
+          <MenuItem onClick={() => signOut({ callbackUrl: '/' })}>Desconectar</MenuItem>
         </MenuList>
       </Menu>
     </>

@@ -1,4 +1,4 @@
-import { extendTheme, withDefaultColorScheme } from '@chakra-ui/react';
+import { extendTheme } from '@chakra-ui/react';
 
 const shadows = {
   outline: '0 0 0 3px var(--chakra-colors-yellow-500)'
@@ -16,15 +16,10 @@ const PinInput = {
   }
 };
 
-export const theme = extendTheme(
-  {
-    shadows,
-    components: {
-      Input,
-      PinInput
-    }
-  },
-  withDefaultColorScheme({
-    colorScheme: 'yellow'
-  })
-);
+export const theme = extendTheme({
+  shadows,
+  components: {
+    Input,
+    PinInput
+  }
+});
