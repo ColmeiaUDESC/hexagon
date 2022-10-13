@@ -15,6 +15,13 @@ const deleteUserSchema = z.object({
   id: z.string()
 });
 
+const editUserSchema = z.object({
+  id: z.string(),
+  fullName: z.string().optional(),
+  email: z.string().optional(),
+  role: z.enum(['ADMIN', 'USER']).optional()
+});
+
 export const userRouter = router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const users = await ctx.prisma.user.findMany({
@@ -89,6 +96,30 @@ export const userRouter = router({
     return {
       status: 200,
       message: 'Usuário deletado com sucesso.'
+    };
+  }),
+  edit: protectedProcedure.input(editUserSchema).mutation(async ({ ctx, input }) => {
+    if (ctx.session.user.role !== 'ADMIN') {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Você não está autorizado para realizar essa operação.'
+      });
+    }
+
+    await ctx.prisma.user.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        fullName: input.fullName,
+        email: input.email,
+        role: input.role
+      }
+    });
+
+    return {
+      status: 200,
+      message: 'Usuário atualizado com sucesso.'
     };
   })
 });

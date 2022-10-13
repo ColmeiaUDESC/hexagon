@@ -77,7 +77,10 @@ const UsersTable = ({ data, setSelectedUserId, onOpenDelete, onOpenEdit }: Props
                       colorScheme="gray"
                       disabled={session.data?.user?.role !== 'ADMIN' || session.data?.user?.id === user.id}
                       icon={<Pencil size={18} weight="bold" />}
-                      onClick={onOpenEdit}
+                      onClick={() => {
+                        setSelectedUserId(user.id);
+                        onOpenEdit();
+                      }}
                     />
                     <IconButton
                       size="sm"

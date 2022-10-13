@@ -3,6 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import { useSession } from 'next-auth/react';
 import { MagnifyingGlass } from 'phosphor-react';
 import { ReactElement, useMemo, useState } from 'react';
+import { User } from '@prisma/client';
 import { getServerAuthSession } from '../../server/common/get-server-auth-session';
 import { trpc } from '../../utils/trpc';
 import { NextPageWithLayout } from '../_app';
@@ -61,6 +62,11 @@ const UsersPage: NextPageWithLayout = () => {
     onCloseDelete();
   };
 
+  const handleCloseEditModal = (saved: boolean) => {
+    if (saved) getAllUsers.refetch();
+    onCloseEdit();
+  };
+
   return (
     <>
       <SEO title="Usuários" />
@@ -74,7 +80,7 @@ const UsersPage: NextPageWithLayout = () => {
           <Input type="text" placeholder="Pesquisar..." onChange={(event) => setSearchInput(event.target.value)} />
         </InputGroup>
 
-        <Skeleton isLoaded={!getAllUsers.isLoading || session.status === 'loading'}>
+        <Skeleton isLoaded={!getAllUsers.isLoading || !getAllUsers.isRefetching || session.status === 'loading'}>
           <UsersTable
             data={searchInput === '' ? getAllUsers.data?.users : filteredUsers}
             onOpenDelete={onOpenDelete}
@@ -84,15 +90,23 @@ const UsersPage: NextPageWithLayout = () => {
         </Skeleton>
       </Box>
 
-      <ConfirmAction
-        title="Excluir usuário"
-        message="Você tem certeza? Essa ação não poderá ser desfeita."
-        isOpen={isOpenDelete}
-        onClose={onCloseModal}
-        isLoading={deleteUser.isLoading}
-      />
+      {isOpenDelete && (
+        <ConfirmAction
+          title="Excluir usuário"
+          message="Você tem certeza? Essa ação não poderá ser desfeita."
+          isOpen={isOpenDelete}
+          onClose={onCloseModal}
+          isLoading={deleteUser.isLoading}
+        />
+      )}
 
-      <EditUser onClose={onCloseEdit} isOpen={isOpenEdit} />
+      {isOpenEdit && (
+        <EditUser
+          user={getAllUsers.data?.users.find((user) => user.id === selectedUserId) as User}
+          handleCloseEditModal={handleCloseEditModal}
+          isOpen={isOpenEdit}
+        />
+      )}
     </>
   );
 };
