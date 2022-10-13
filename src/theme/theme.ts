@@ -16,10 +16,17 @@ const PinInput = {
   }
 };
 
+const Select = {
+  defaultProps: {
+    focusBorderColor: 'yellow.500'
+  }
+};
+
 export const theme = extendTheme({
   shadows,
   components: {
     Input,
-    PinInput
+    PinInput,
+    Select
   }
 });

@@ -31,10 +31,11 @@ interface Props {
       }>
     | undefined;
   setSelectedUserId: Dispatch<SetStateAction<string>>;
-  onOpen: () => void;
+  onOpenDelete: () => void;
+  onOpenEdit: () => void;
 }
 
-const UsersTable = ({ data, setSelectedUserId, onOpen }: Props) => {
+const UsersTable = ({ data, setSelectedUserId, onOpenDelete, onOpenEdit }: Props) => {
   const session = useSession();
 
   return (
@@ -74,8 +75,9 @@ const UsersTable = ({ data, setSelectedUserId, onOpen }: Props) => {
                       size="sm"
                       aria-label="Edit user"
                       colorScheme="gray"
-                      disabled
+                      disabled={session.data?.user?.role !== 'ADMIN' || session.data?.user?.id === user.id}
                       icon={<Pencil size={18} weight="bold" />}
+                      onClick={onOpenEdit}
                     />
                     <IconButton
                       size="sm"
@@ -84,7 +86,7 @@ const UsersTable = ({ data, setSelectedUserId, onOpen }: Props) => {
                       icon={<Trash size={18} weight="bold" />}
                       onClick={() => {
                         setSelectedUserId(user.id);
-                        onOpen();
+                        onOpenDelete();
                       }}
                       disabled={session.data?.user?.role !== 'ADMIN' || session.data?.user?.id === user.id}
                     />

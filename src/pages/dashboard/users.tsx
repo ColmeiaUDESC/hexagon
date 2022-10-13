@@ -10,13 +10,15 @@ import ConfirmAction from '../../components/dashboard/ConfirmAction';
 import UsersTable from '../../components/dashboard/tables/UsersTable';
 import SEO from '../../components/SEO';
 import DashboardLayout from '../../layouts/DashboardLayout';
+import EditUser from '../../components/dashboard/modals/EditUser';
 
 const UsersPage: NextPageWithLayout = () => {
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [searchInput, setSearchInput] = useState<string>('');
 
   const session = useSession();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
   const toast = useToast();
 
   const getAllUsers = trpc.user.getAll.useQuery();
@@ -56,7 +58,7 @@ const UsersPage: NextPageWithLayout = () => {
       }
     }
 
-    onClose();
+    onCloseDelete();
   };
 
   return (
@@ -75,7 +77,8 @@ const UsersPage: NextPageWithLayout = () => {
         <Skeleton isLoaded={!getAllUsers.isLoading || session.status === 'loading'}>
           <UsersTable
             data={searchInput === '' ? getAllUsers.data?.users : filteredUsers}
-            onOpen={onOpen}
+            onOpenDelete={onOpenDelete}
+            onOpenEdit={onOpenEdit}
             setSelectedUserId={setSelectedUserId}
           />
         </Skeleton>
@@ -84,10 +87,12 @@ const UsersPage: NextPageWithLayout = () => {
       <ConfirmAction
         title="Excluir usuário"
         message="Você tem certeza? Essa ação não poderá ser desfeita."
-        isOpen={isOpen}
+        isOpen={isOpenDelete}
         onClose={onCloseModal}
         isLoading={deleteUser.isLoading}
       />
+
+      <EditUser onClose={onCloseEdit} isOpen={isOpenEdit} />
     </>
   );
 };
