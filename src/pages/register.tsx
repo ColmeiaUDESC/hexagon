@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import SEO from '../components/SEO';
@@ -31,6 +32,7 @@ interface FormValues {
 }
 
 const RegisterPage: NextPage = () => {
+  const router = useRouter();
   const toast = useToast();
 
   const {
@@ -52,6 +54,8 @@ const RegisterPage: NextPage = () => {
         duration: 3500,
         position: 'top-right'
       });
+
+      router.push('/');
     } else {
       toast({
         title: 'Erro ao registrar usuário!',

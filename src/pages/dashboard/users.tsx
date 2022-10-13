@@ -1,36 +1,63 @@
-import {
-  Avatar,
-  Badge,
-  Box,
-  Flex,
-  HStack,
-  IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Stack,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useDisclosure
-} from '@chakra-ui/react';
+import { Box, Input, InputGroup, InputLeftElement, Skeleton, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import { GetServerSidePropsContext } from 'next';
-import { MagnifyingGlass, Pencil, Trash } from 'phosphor-react';
-import { ReactElement } from 'react';
+import { useSession } from 'next-auth/react';
+import { MagnifyingGlass } from 'phosphor-react';
+import { ReactElement, useMemo, useState } from 'react';
+import { getServerAuthSession } from '../../server/common/get-server-auth-session';
+import { trpc } from '../../utils/trpc';
+import { NextPageWithLayout } from '../_app';
 import ConfirmAction from '../../components/dashboard/ConfirmAction';
+import UsersTable from '../../components/dashboard/tables/UsersTable';
 import SEO from '../../components/SEO';
 import DashboardLayout from '../../layouts/DashboardLayout';
-import { getServerAuthSession } from '../../server/common/get-server-auth-session';
-import { NextPageWithLayout } from '../_app';
 
 const UsersPage: NextPageWithLayout = () => {
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>('');
+
+  const session = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  const getAllUsers = trpc.user.getAll.useQuery();
+  const deleteUser = trpc.user.delete.useMutation();
+
+  const filteredUsers = useMemo(
+    () =>
+      getAllUsers.data?.users.filter(
+        (user) =>
+          user.fullName.toLowerCase().includes(searchInput.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchInput.toLowerCase())
+      ),
+    [searchInput]
+  );
+
+  const onCloseModal = async (confirmed: boolean) => {
+    if (confirmed) {
+      const res = await deleteUser.mutateAsync({ id: selectedUserId });
+
+      if (res.status === 200) {
+        toast({
+          title: 'Usuário excluído com sucesso!',
+          status: 'success',
+          duration: 3500,
+          position: 'top-right'
+        });
+
+        getAllUsers.refetch();
+      } else {
+        toast({
+          title: 'Erro ao tentar excluir o usuário!',
+          description: 'Verifique e tente novamente.',
+          status: 'error',
+          duration: 3500,
+          position: 'top-right'
+        });
+      }
+    }
+
+    onClose();
+  };
 
   return (
     <>
@@ -42,98 +69,24 @@ const UsersPage: NextPageWithLayout = () => {
               <MagnifyingGlass size={20} weight="bold" />
             </Text>
           </InputLeftElement>
-          <Input type="text" placeholder="Pesquisar..." />
+          <Input type="text" placeholder="Pesquisar..." onChange={(event) => setSearchInput(event.target.value)} />
         </InputGroup>
 
-        <TableContainer>
-          <Table variant="unstyled" size="sm">
-            <TableCaption>Usuários registrados no sistema</TableCaption>
-            <Thead>
-              <Tr>
-                <Th>Identificação</Th>
-                <Th>Tipo</Th>
-                <Th>Registrado em</Th>
-                <Th>Ações</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>
-                  <Flex alignItems="center" gap={4}>
-                    <Avatar name="Dan Abrahmov" src="https://github.com/joaodematte.png" size="md" />
-                    <Stack spacing={0}>
-                      <Text fontWeight="bold">João Dematte</Text>
-                      <Text fontSize="sm">demattejoao@gmail.com</Text>
-                    </Stack>
-                  </Flex>
-                </Td>
-                <Td>
-                  <Badge colorScheme="blue">Voluntário</Badge>
-                </Td>
-                <Td>24/04/2002 - 15:23</Td>
-                <Td>
-                  <HStack>
-                    <IconButton
-                      size="sm"
-                      aria-label="Edit user"
-                      colorScheme="gray"
-                      disabled
-                      icon={<Pencil size={18} weight="bold" />}
-                    />
-                    <IconButton
-                      size="sm"
-                      aria-label="Delete user"
-                      colorScheme="red"
-                      icon={<Trash size={18} weight="bold" />}
-                      onClick={onOpen}
-                    />
-                  </HStack>
-                </Td>
-              </Tr>
-
-              <Tr>
-                <Td>
-                  <Flex alignItems="center" gap={4}>
-                    <Avatar name="Dan Abrahmov" src="https://github.com/gabrielfjunkes.png" size="md" />
-                    <Stack spacing={0}>
-                      <Text fontWeight="bold">Gabriel Junkes</Text>
-                      <Text fontSize="sm">gabrielfjunkes@gmail.com</Text>
-                    </Stack>
-                  </Flex>
-                </Td>
-                <Td>
-                  <Badge colorScheme="yellow">Bolsista</Badge>
-                </Td>
-                <Td>24/04/2002 - 15:23</Td>
-                <Td>
-                  <HStack>
-                    <IconButton
-                      size="sm"
-                      aria-label="Edit user"
-                      colorScheme="gray"
-                      disabled
-                      icon={<Pencil size={18} weight="bold" />}
-                    />
-                    <IconButton
-                      size="sm"
-                      aria-label="Delete user"
-                      colorScheme="red"
-                      icon={<Trash size={18} weight="bold" />}
-                      onClick={onOpen}
-                    />
-                  </HStack>
-                </Td>
-              </Tr>
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <Skeleton isLoaded={!getAllUsers.isLoading || session.status === 'loading'}>
+          <UsersTable
+            data={searchInput === '' ? getAllUsers.data?.users : filteredUsers}
+            onOpen={onOpen}
+            setSelectedUserId={setSelectedUserId}
+          />
+        </Skeleton>
       </Box>
 
       <ConfirmAction
         title="Excluir usuário"
         message="Você tem certeza? Essa ação não poderá ser desfeita."
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={onCloseModal}
+        isLoading={deleteUser.isLoading}
       />
     </>
   );

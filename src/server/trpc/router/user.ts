@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
-import { router, publicProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure } from '../trpc';
 
-const createUser = z.object({
+const createUserSchema = z.object({
   fullName: z.string(),
   email: z.string(),
   password: z.string(),
@@ -11,8 +11,30 @@ const createUser = z.object({
   registerCode: z.number().optional()
 });
 
+const deleteUserSchema = z.object({
+  id: z.string()
+});
+
 export const userRouter = router({
-  create: publicProcedure.input(createUser).mutation(async ({ ctx, input }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const users = await ctx.prisma.user.findMany({
+      select: {
+        email: true,
+        fullName: true,
+        id: true,
+        role: true,
+        image: true,
+        emailVerified: true
+      }
+    });
+
+    return {
+      status: 200,
+      message: 'Usuários obtidos com sucesso',
+      users
+    };
+  }),
+  create: publicProcedure.input(createUserSchema).mutation(async ({ ctx, input }) => {
     const { fullName, email, password, passwordConfirm } = input;
 
     if (password !== passwordConfirm) {
@@ -48,6 +70,25 @@ export const userRouter = router({
     return {
       status: 201,
       message: 'Usuário registrado com sucesso!'
+    };
+  }),
+  delete: protectedProcedure.input(deleteUserSchema).mutation(async ({ ctx, input }) => {
+    if (ctx.session.user.role !== 'ADMIN') {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Você não está autorizado para realizar essa operação.'
+      });
+    }
+
+    await ctx.prisma.user.delete({
+      where: {
+        id: input.id
+      }
+    });
+
+    return {
+      status: 200,
+      message: 'Usuário deletado com sucesso.'
     };
   })
 });
