@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!existsUser) return null;
-
+        if (!existsUser.emailVerified) return null;
         if (!bcrypt.compareSync(credentials?.password, existsUser.password)) return null;
 
         const { password, ...userWithoutPassword } = existsUser;

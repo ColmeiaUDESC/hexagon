@@ -13,6 +13,7 @@ specifiers:
   '@trpc/server': 10.0.0-proxy-beta.17
   '@types/bcryptjs': ^2.4.2
   '@types/node': 18.0.0
+  '@types/nodemailer': ^6.4.6
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
   '@typescript-eslint/eslint-plugin': ^5.40.0
@@ -31,6 +32,7 @@ specifiers:
   framer-motion: ^7.5.3
   next: 12.3.1
   next-auth: ^4.12.3
+  nodemailer: ^6.8.0
   phosphor-react: ^1.4.1
   prettier: ^2.7.1
   prisma: ^4.4.0
@@ -55,7 +57,8 @@ dependencies:
   bcryptjs: 2.4.3
   framer-motion: 7.5.3_biqbaboplfbrettd7655fr4n2y
   next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-  next-auth: 4.13.0_azq6kxkn3od7qdylwkyksrwopy
+  next-auth: 4.13.0_pvhs6umhoiyo7cgwjp6cvqsra4
+  nodemailer: 6.8.0
   phosphor-react: 1.4.1_react@18.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -66,6 +69,7 @@ dependencies:
 devDependencies:
   '@types/bcryptjs': 2.4.2
   '@types/node': 18.0.0
+  '@types/nodemailer': 6.4.6
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
   '@typescript-eslint/eslint-plugin': 5.40.0_6vbvae4yykgzhztlnnn3nn5eva
@@ -1387,7 +1391,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 4.4.0_prisma@4.4.0
-      next-auth: 4.13.0_azq6kxkn3od7qdylwkyksrwopy
+      next-auth: 4.13.0_pvhs6umhoiyo7cgwjp6cvqsra4
     dev: false
 
   /@next/env/12.3.1:
@@ -1685,6 +1689,12 @@ packages:
 
   /@types/node/18.0.0:
     resolution: {integrity: sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==}
+    dev: true
+
+  /@types/nodemailer/6.4.6:
+    resolution: {integrity: sha512-pD6fL5GQtUKvD2WnPmg5bC2e8kWCAPDwMPmHe/ohQbW+Dy0EcHgZ2oCSuPlWNqk74LS5BVMig1SymQbFMPPK3w==}
+    dependencies:
+      '@types/node': 18.0.0
     dev: true
 
   /@types/parse-json/4.0.0:
@@ -3278,7 +3288,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-auth/4.13.0_azq6kxkn3od7qdylwkyksrwopy:
+  /next-auth/4.13.0_pvhs6umhoiyo7cgwjp6cvqsra4:
     resolution: {integrity: sha512-FtkPpeb9Bax6yKDaxcaGIvZZjvr10JaU2AsBYv1yv4N6rP86Xa7/4Ro1Aq94YGwsYzk+YKS52CRjD2DqCcSmVA==}
     engines: {node: ^12.19.0 || ^14.15.0 || ^16.13.0}
     peerDependencies:
@@ -3295,6 +3305,7 @@ packages:
       cookie: 0.5.0
       jose: 4.10.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      nodemailer: 6.8.0
       oauth: 0.9.15
       openid-client: 5.1.10
       preact: 10.11.1
@@ -3347,6 +3358,11 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
+
+  /nodemailer/6.8.0:
+    resolution: {integrity: sha512-EjYvSmHzekz6VNkNd12aUqAco+bOkRe3Of5jVhltqKhEsjw/y0PYPJfp83+s9Wzh1dspYAkUW/YNQ350NATbSQ==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /oauth/0.9.15:

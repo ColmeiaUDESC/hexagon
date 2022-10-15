@@ -108,9 +108,7 @@ const LoginPage: NextPage = () => {
                   </FormControl>
                 </Stack>
                 <HStack justify="space-between">
-                  <Checkbox defaultChecked colorScheme="yellow">
-                    Permanecer conectado
-                  </Checkbox>
+                  <Checkbox colorScheme="yellow">Permanecer conectado</Checkbox>
                   <Button variant="link" size="sm" colorScheme="yellow">
                     Esqueceu sua senha?
                   </Button>

@@ -14,7 +14,11 @@ export const serverSchema = z.object({
     // Since NextAuth automatically uses the VERCEL_URL if present.
     (str) => process.env.VERCEL_URL ?? str,
     process.env.VERCEL ? z.string() : z.string().url()
-  )
+  ),
+  EMAIL_USER: z.string(),
+  EMAIL_PASS: z.string(),
+  EMAIL_SERVER: z.string(),
+  EMAIL_PORT: z.string()
 });
 
 /**

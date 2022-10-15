@@ -17,7 +17,7 @@ import {
 import { GetServerSidePropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import * as React from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import SEO from '../components/SEO';
 import { getServerAuthSession } from '../server/common/get-server-auth-session';
@@ -28,23 +28,28 @@ interface FormValues {
   email: string;
   password: string;
   passwordConfirm: string;
-  registerCode?: number;
 }
 
 const RegisterPage: NextPage = () => {
   const router = useRouter();
   const toast = useToast();
 
+  const [registerToken, setRegisterToken] = useState<string | undefined>();
+
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm<FormValues>();
 
   const createUser = trpc.user.create.useMutation();
 
   const onSubmit = async (data: FormValues) => {
-    const res = await createUser.mutateAsync({ ...data });
+    const res = await createUser.mutateAsync({
+      ...data,
+      registerToken: registerToken ? Number(registerToken) : undefined
+    });
 
     if (res.status === 201) {
       toast({
@@ -55,7 +60,7 @@ const RegisterPage: NextPage = () => {
         position: 'top-right'
       });
 
-      router.push('/');
+      router.push(`/confirm-email?email=${getValues('email')}`);
     } else {
       toast({
         title: 'Erro ao registrar usuário!',
@@ -136,7 +141,9 @@ const RegisterPage: NextPage = () => {
                   <FormControl>
                     <FormLabel htmlFor="passwordConfirm">Você tem algum código de registro?</FormLabel>
                     <HStack>
-                      <PinInput type="number">
+                      <PinInput type="number" onChange={(value) => setRegisterToken(value)}>
+                        <PinInputField />
+                        <PinInputField />
                         <PinInputField />
                         <PinInputField />
                         <PinInputField />

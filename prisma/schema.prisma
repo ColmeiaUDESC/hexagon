@@ -25,10 +25,11 @@ model User {
 }
 
 model RegisterToken {
-    identifier String @id @default(uuid())
-    token      String @unique
+    id    String @id @default(uuid())
+    token Int
+    email String
 
-    @@unique([identifier, token])
+    @@unique([token, email])
 }
 
 enum Role {
