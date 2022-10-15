@@ -61,10 +61,7 @@ const ConfirmEmailPage: NextPage = () => {
   };
 
   useEffect(() => {
-    if (router.query.email) {
-      console.log('email');
-      setEmail(router.query.email as string);
-    }
+    if (router.query.email) setEmail(router.query.email as string);
     if (router.query.token) setToken(router.query.token as string);
   }, [router.query]);
 

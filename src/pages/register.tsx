@@ -60,7 +60,8 @@ const RegisterPage: NextPage = () => {
         position: 'top-right'
       });
 
-      router.push(`/confirm-email?email=${getValues('email')}`);
+      if (registerToken) router.push('/');
+      else router.push(`/confirm-email?email=${getValues('email')}`);
     } else {
       toast({
         title: 'Erro ao registrar usuário!',

@@ -1,4 +1,15 @@
-import { Box, Input, InputGroup, InputLeftElement, Skeleton, Text, useDisclosure, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Skeleton,
+  Text,
+  useDisclosure,
+  useToast
+} from '@chakra-ui/react';
 import { GetServerSidePropsContext } from 'next';
 import { useSession } from 'next-auth/react';
 import { MagnifyingGlass } from 'phosphor-react';
@@ -12,6 +23,7 @@ import UsersTable from '../../components/dashboard/tables/UsersTable';
 import SEO from '../../components/SEO';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import EditUser from '../../components/dashboard/modals/EditUser';
+import CreateToken from '../../components/dashboard/modals/CreateToken';
 
 const UsersPage: NextPageWithLayout = () => {
   const [selectedUserId, setSelectedUserId] = useState<string>('');
@@ -20,6 +32,7 @@ const UsersPage: NextPageWithLayout = () => {
   const session = useSession();
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
+  const { isOpen: isOpenToken, onOpen: onOpenToken, onClose: onCloseToken } = useDisclosure();
   const toast = useToast();
 
   const getAllUsers = trpc.user.getAll.useQuery();
@@ -71,14 +84,22 @@ const UsersPage: NextPageWithLayout = () => {
     <>
       <SEO title="Usuários" />
       <Box bg="white" borderRadius={5} p={4} display="flex" flexDirection="column" gap={8}>
-        <InputGroup w="full" maxW={96}>
-          <InputLeftElement pointerEvents="none">
-            <Text color="gray.300">
-              <MagnifyingGlass size={20} weight="bold" />
-            </Text>
-          </InputLeftElement>
-          <Input type="text" placeholder="Pesquisar..." onChange={(event) => setSearchInput(event.target.value)} />
-        </InputGroup>
+        <Flex justifyContent="space-between" gap={4}>
+          <InputGroup flexShrink={0} w="full" maxW={96}>
+            <InputLeftElement pointerEvents="none">
+              <Text color="gray.300">
+                <MagnifyingGlass size={20} weight="bold" />
+              </Text>
+            </InputLeftElement>
+            <Input type="text" placeholder="Pesquisar..." onChange={(event) => setSearchInput(event.target.value)} />
+          </InputGroup>
+
+          {session.data?.user?.role === 'ADMIN' && (
+            <Button flexShrink={0} onClick={onOpenToken} colorScheme="yellow">
+              Criar token de registro
+            </Button>
+          )}
+        </Flex>
 
         <Skeleton isLoaded={!getAllUsers.isLoading || !getAllUsers.isRefetching || session.status === 'loading'}>
           <UsersTable
@@ -107,6 +128,8 @@ const UsersPage: NextPageWithLayout = () => {
           isOpen={isOpenEdit}
         />
       )}
+
+      {isOpenToken && <CreateToken isOpen={isOpenToken} onClose={onCloseToken} />}
     </>
   );
 };
